@@ -27,10 +27,7 @@ namespace PigDiceGame
 
                 if (input == "r")
                 {
-                    int roll = random.Next(1, 7);
-
-                    Console.WriteLine("You rolled a {0}", roll);
-
+                    int roll = RollDice(random);
                     if (roll == 1)
                     {
                         Console.WriteLine("You rolled a 1. Your turn is over.");
@@ -39,14 +36,13 @@ namespace PigDiceGame
                     }
                     else
                     {
-                        turnScore += roll;
+                        turnScore = UpdateTurnScore(turnScore, roll);
                     }
                 }
                 else if (input == "h")
                 {
-                    playerScore += turnScore;
+                    playerScore = UpdatePlayerScore(playerScore, turnScore);
                     turnScore = 0;
-                    Console.WriteLine("Your turn is over. Your total score is {0}", playerScore);
                     break;
                 }
                 else
@@ -55,14 +51,7 @@ namespace PigDiceGame
                 }
             }
 
-            if (playerScore >= 20)
-            {
-                Console.WriteLine("Congratulations! You won with a score of {0}", playerScore);
-            }
-            else
-            {
-                Console.WriteLine("Better luck next time!");
-            }
+            DisplayEndGameResult(playerScore);
 
             Console.Write("Do you want to play again? (y/n) ");
             string playAgain = Console.ReadLine();
@@ -72,5 +61,38 @@ namespace PigDiceGame
                 Main(args);
             }
         }
+
+        static int RollDice(Random random)
+        {
+            int roll = random.Next(1, 7);
+            Console.WriteLine("You rolled a {0}", roll);
+            return roll;
+        }
+
+        static int UpdateTurnScore(int turnScore, int roll)
+        {
+            turnScore += roll;
+            return turnScore;
+        }
+
+        static int UpdatePlayerScore(int playerScore, int turnScore)
+        {
+            playerScore += turnScore;
+            Console.WriteLine("Your turn is over. Your total score is {0}", playerScore);
+            return playerScore;
+        }
+
+        static void DisplayEndGameResult(int playerScore)
+        {
+            if (playerScore >= 20)
+            {
+                Console.WriteLine("Congratulations! You won with a score of {0}", playerScore);
+            }
+            else
+            {
+                Console.WriteLine("Better luck next time!");
+            }
+        }
     }
 }
+
