@@ -11,19 +11,24 @@ namespace PigDiceGame
         static void Main(string[] args)
         {
             Console.WriteLine("Welcome to the game of Pig!");
-            Console.WriteLine("The goal is to be the first player to reach 20 points.");
-
             int playerScore = 0;
             int turnScore = 0;
             Random random = new Random();
+            bool continuePlaying = true;
 
-            while (playerScore < 20)
+            while (playerScore < 20 && continuePlaying)
             {
                 Console.WriteLine("Your total score is {0}", playerScore);
                 Console.WriteLine("Your current turn score is {0}", turnScore);
 
                 Console.Write("Do you want to roll again (r) or hold (h)? ");
                 string input = Console.ReadLine();
+
+                if (input != "r" && input != "h")
+                {
+                    Console.WriteLine("Invalid input. Please enter 'r' to roll again or 'h' to hold.");
+                    continue;
+                }
 
                 if (input == "r")
                 {
@@ -32,26 +37,27 @@ namespace PigDiceGame
                     {
                         Console.WriteLine("You rolled a 1. Your turn is over.");
                         turnScore = 0;
-                        break;
+                        continue;
                     }
-                    else
-                    {
-                        turnScore = UpdateTurnScore(turnScore, roll);
-                    }
+
+                    turnScore = UpdateTurnScore(turnScore, roll);
                 }
-                else if (input == "h")
+
+                if (input == "h")
                 {
-                    playerScore = UpdatePlayerScore(playerScore, turnScore);
+                    playerScore = UpdateTotalScore(playerScore, turnScore);
                     turnScore = 0;
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("Invalid input. Please enter 'r' to roll again or 'h' to hold.");
+                    if (playerScore >= 20)
+                    {
+                        Console.WriteLine("Congratulations, you won!");
+                        continuePlaying = false;
+                    }
+                    continue;
                 }
             }
 
-            DisplayEndGameResult(playerScore);
+            string displayResult = DisplayEndGameResult(playerScore);
+            Console.WriteLine(displayResult);
 
             Console.Write("Do you want to play again? (y/n) ");
             string playAgain = Console.ReadLine();
@@ -75,23 +81,20 @@ namespace PigDiceGame
             return turnScore;
         }
 
-        static int UpdatePlayerScore(int playerScore, int turnScore)
+        static int UpdateTotalScore(int playerScore, int turnScore)
         {
             playerScore += turnScore;
             Console.WriteLine("Your turn is over. Your total score is {0}", playerScore);
             return playerScore;
         }
 
-        static void DisplayEndGameResult(int playerScore)
+        static string DisplayEndGameResult(int playerScore)
         {
             if (playerScore >= 20)
             {
-                Console.WriteLine("Congratulations! You won with a score of {0}", playerScore);
+                return $"Congratulations! You won with a score of {playerScore}";
             }
-            else
-            {
-                Console.WriteLine("Better luck next time!");
-            }
+            return "Better luck next time!";
         }
     }
 }
